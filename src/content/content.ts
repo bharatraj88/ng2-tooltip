@@ -1,8 +1,9 @@
 import { ContentOptions } from './options';
 
-import { Component,AfterContentChecked , ElementRef } from '@angular/core';
+import { Component, AfterContentChecked, ElementRef, ChangeDetectionStrategy } from '@angular/core';
+
 @Component({
-  template : `
+    template: `
             <div class="ng-tool-tip-content"
                     [ngClass]="options.cls"
                     [innerHTML] = "options.content"
@@ -10,35 +11,36 @@ import { Component,AfterContentChecked , ElementRef } from '@angular/core';
                     [style.left.px]="options.x"
                     style="z-index : 10;border: 1px solid #000;background-color: #FFF;position: absolute;">
               </div>
-              `
+              `,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class HoveredContent implements AfterContentChecked{
+export class HoveredContent implements AfterContentChecked {
 
-    private _options : ContentOptions;
+    private _options: ContentOptions;
 
-    constructor(private elRef:ElementRef){
+    constructor(private elRef: ElementRef) {
 
     }
 
-    set options(op : ContentOptions){
+    set options(op: ContentOptions) {
         this._options = op;
     }
 
-    get options():ContentOptions{
+    get options(): ContentOptions {
         return this._options;
     }
 
-  ngAfterContentChecked(){
-    let toolTipWidth:number = this.elRef.nativeElement.querySelector('div.ng-tool-tip-content').offsetWidth;
-    if(window.innerWidth < (toolTipWidth+this.options.x)){
-      this.options.x = this.options.x - toolTipWidth;
+    ngAfterContentChecked() {
+        let toolTipWidth: number = this.elRef.nativeElement.querySelector('div.ng-tool-tip-content').offsetWidth;
+        if (window.innerWidth < (toolTipWidth + this.options.x)) {
+            this.options.x = this.options.x - toolTipWidth;
+        }
+        if (this.options.offset && this.options.offset.x) {
+            this.options.x += this.options.offset.x
+        }
+        if (this.options.offset && this.options.offset.y) {
+            this.options.y += this.options.offset.y
+        }
     }
-    if(this.options.offset && this.options.offset.x){
-        this.options.x +=this.options.offset.x
-    }
-    if(this.options.offset && this.options.offset.y){
-        this.options.y +=this.options.offset.y
-    }
-  }
 }
